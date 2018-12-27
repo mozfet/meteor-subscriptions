@@ -1,6 +1,6 @@
 Package.describe({
   name: 'mozfet:subscriptions',
-  version: '0.0.1',
+  version: '0.0.3',
   // Brief, one-line summary of the package.
   summary: 'Extends mozfet:payments with subscription product management.',
   // URL to the Git repository containing the source code for this package.
@@ -10,11 +10,18 @@ Package.describe({
   documentation: 'README.md'
 });
 
+Npm.depends({
+  'moment': '2.22.2'
+});
+
 Package.onUse(function(api) {
   api.versionsFrom('1.8.0.1');
-  api.use('ecmascript');
-  api.use('mozfet:materialize-payments@1.0.2', 'server');
-  api.mainModule('subscriptions.js');
+  api.use(['ecmascript', 'mongo']);
+  api.use([
+    'mozfet:meteor-logs@0.3.3',
+    'mozfet:materialize-payments@1.0.3'
+  ],  'server');
+  api.mainModule('subscriptions.js', 'server');
 });
 
 Package.onTest(function(api) {
