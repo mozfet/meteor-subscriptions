@@ -1,12 +1,8 @@
 Package.describe({
   name: 'mozfet:subscriptions',
-  version: '0.0.3',
-  // Brief, one-line summary of the package.
+  version: '0.0.6',
   summary: 'Extends mozfet:payments with subscription product management.',
-  // URL to the Git repository containing the source code for this package.
   git: 'https://github.com/mozfet/meteor-subscriptions.git',
-  // By default, Meteor will default to using README.md for documentation.
-  // To avoid submitting documentation, set this field to null.
   documentation: 'README.md'
 });
 
@@ -16,17 +12,34 @@ Npm.depends({
 
 Package.onUse(function(api) {
   api.versionsFrom('1.8.0.1');
-  api.use(['ecmascript', 'mongo']);
+
+  // both
+  api.use([
+    'ecmascript',
+    'mongo',
+    'rocketchat:streamer@1.0.1'
+  ]);
+
+  // server
   api.use([
     'mozfet:meteor-logs@0.3.3',
-    'mozfet:materialize-payments@1.0.3'
-  ],  'server');
-  api.mainModule('subscriptions.js', 'server');
+    'mozfet:materialize-payments@1.0.4'
+  ], 'server');
+  api.mainModule('./server/subscriptions.js', 'server');
+
+  // client
+  api.use([
+    'templating@1.3.2',
+    'ui@1.0.13'
+  ], 'client')
+  api.mainModule('./client/subscriptions.js', 'client', {lazy: true});
 });
 
-Package.onTest(function(api) {
-  api.use('ecmascript');
-  api.use('tinytest');
-  api.use('mozfet:subscriptions');
-  api.mainModule('subscriptions-tests.js');
-});
+
+
+// Package.onTest(function(api) {
+//   api.use('ecmascript');
+//   api.use('tinytest');
+//   api.use('mozfet:subscriptions');
+//   api.mainModule('subscriptions-tests.js');
+// });

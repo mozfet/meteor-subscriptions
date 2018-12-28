@@ -1,0 +1,14 @@
+<!-- usage:
+{{#showIfSubscribed productCode="MY_PRODUCT"}}
+  This will only show if user has active subscription to MY_PRODUCT
+{{/showIfSubscribed}}
+-->
+<template name="showIfSubscribed">
+  {{#if Template.subscriptionsReady}}
+    {{#if show}}
+      {{> UI.contentBlock}}
+    {{else}}
+      {{> UI.elseBlock}}
+    {{/if}}
+  {{/if}}
+</template>
