@@ -1,14 +1,40 @@
 // imports
 import moment from 'moment'
-import { emitter, events as paymentEvents } from 'meteor/mozfet:materialize-payments'
+import { check } from 'meteor/check'
+import { _ } from 'meteor/underscore'
+import { emitter, events as paymentEvents
+    } from 'meteor/mozfet:materialize-payments'
 import {
     isSubscribed,
     subscriptions,
     events as subscriptionEvents
   } from '../both/subscriptions.js'
 
-// export events
-export const events = subscriptionEvents
+// export events, isSubscribed and subscriptions
+export const events = {}
+_.extend(events, paymentEvents, subscriptionEvents)
+export {isSubscribed, subscriptions}
+
+/**
+ * remove all users that are not subscribed from the list.
+ * @param {}  -
+ * @returns {}
+ **/
+export function filterSubscribedUsers(userIds, productCode) {
+  check(userIds, Array)
+  const now = new moment().toDate()
+  const query = {
+    ownerId: {$in: userIds},
+    $or : [{expiresAt: {$gt: now}}, {expiresAt: {$exists: false}}]
+  }
+  if (productCode) {
+    check(productCode, String)
+    query.productCode = productCode
+  }
+  const subscribedUserIds =
+      subscriptions.find(query, {fields: {_id: 1}}).fetch()
+  return _.pick(subscribedUserIds, '_id')
+}
 
 // handle payment approved event
 emitter.on(paymentEvents.PAYMENT_APPROVED, payment => {
@@ -55,6 +81,14 @@ Meteor.publish('mozfet:subscriptions', function () {
     return cursor
   }
   else {
-    return undefined
+    Log.log(['debug', 'payments', 'subscriptions', 'publish'],
+      `No product subscription for undefined user.`)
+    this.ready()
+  }
+})
+
+Meteor.methods({
+  'mozfet:subscriptions.isSubscribed'(productCode) {
+    return isSubscribed(Meteor.userId(), productCode)
   }
 })

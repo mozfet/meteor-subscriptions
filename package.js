@@ -1,6 +1,6 @@
 Package.describe({
   name: 'mozfet:subscriptions',
-  version: '0.0.6',
+  version: '0.0.7',
   summary: 'Extends mozfet:payments with subscription product management.',
   git: 'https://github.com/mozfet/meteor-subscriptions.git',
   documentation: 'README.md'

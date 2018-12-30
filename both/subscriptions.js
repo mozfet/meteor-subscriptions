@@ -26,6 +26,23 @@ export function isSubscribed(userId, productCode) {
     query.productCode = productCode
   }
   Log.log(['debug', 'payments', 'subscriptions'], `isSubscribed query`, query)
-  const subs = subscriptions.find(query, {fields: {_id: 1}})
-  return subs.count()>1
+  const cursor = subscriptions.find(query, {fields: {_id: 1}})
+  Log.log(['debug', 'payments', 'subscriptions'], `fetched cursor`, cursor.fetch())
+  return cursor.count()>0
 }
+
+// // mongodb cmd line
+// db.subscriptions.find({
+//   $or: [
+//     {expiresAt: {$gt: new Date('2018-12-27')}},
+//     {expiresAt: {$exists: false}}
+//   ]
+// })
+//
+// // browser javascript console
+// Mongo.Collection.get('subscriptions').find({
+//   $or: [
+//     {expiresAt: {$gt: new Date('2018-12-27')}},
+//     {expiresAt: {$exists: false}}
+//   ]
+// }).fetch()
