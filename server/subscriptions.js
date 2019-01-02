@@ -21,6 +21,8 @@ export {isSubscribed, subscriptions}
  * @returns {}
  **/
 export function filterSubscribedUsers(userIds, productCode) {
+  Log.log(['debug', 'subscriptions'],
+      `filterSubscribedUsers`, userIds, productCode)
   check(userIds, Array)
   const now = new moment().toDate()
   const query = {
@@ -31,9 +33,10 @@ export function filterSubscribedUsers(userIds, productCode) {
     check(productCode, String)
     query.productCode = productCode
   }
+  Log.log(['debug', 'subscriptions'], `query:`, query)
   const subscribedUserIds =
-      subscriptions.find(query, {fields: {_id: 1}}).fetch()
-  return _.pick(subscribedUserIds, '_id')
+      subscriptions.find(query, {fields: {ownerId: 1}}).fetch()
+  return _.pluck(subscribedUserIds, 'ownerId')
 }
 
 // handle payment approved event
@@ -68,25 +71,28 @@ emitter.on(paymentEvents.PAYMENT_APPROVED, payment => {
   }
 })
 
+// handle subscription event
 emitter.on(subscriptionEvents.SUBSCRIPTION, doc => {
   Log.log(['debug', 'payments', 'subscriptions', 'events'],
       `On Subscription Approved:`, doc._id)
 })
 
+// publications
 Meteor.publish('mozfet:subscriptions', function () {
   if (this.userId) {
     const cursor = subscriptions.find({ownerId: this.userId})
-    Log.log(['debug', 'payments', 'subscriptions', 'publish'],
+    Log.log(['debug', 'subscriptions', 'publish'],
       `Publish ${cursor.count()} product subscriptions to user ${this.userId}.`)
     return cursor
   }
   else {
-    Log.log(['debug', 'payments', 'subscriptions', 'publish'],
+    Log.log(['debug', 'subscriptions', 'publish'],
       `No product subscription for undefined user.`)
     this.ready()
   }
 })
 
+// server side only methods
 Meteor.methods({
   'mozfet:subscriptions.isSubscribed'(productCode) {
     return isSubscribed(Meteor.userId(), productCode)

@@ -6,8 +6,7 @@ export const events = {
   SUBSCRIPTION: 'SUBSCRIPTION'
 }
 
-export const streamer = new Meteor.Streamer('mozfet:subscriptions')
-export const subscriptions = new Mongo.Collection('subscriptions')
+export const subscriptions = new Mongo.Collection('mozfet_subscriptions')
 
 export function isSubscribed(userId, productCode) {
   Log.log(['debug', 'payments', 'subscriptions'],

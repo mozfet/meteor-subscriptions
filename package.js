@@ -16,8 +16,7 @@ Package.onUse(function(api) {
   // both
   api.use([
     'ecmascript',
-    'mongo',
-    'rocketchat:streamer@1.0.1'
+    'mongo'
   ]);
 
   // server
