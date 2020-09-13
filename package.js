@@ -1,6 +1,6 @@
 Package.describe({
   name: 'mozfet:subscriptions',
-  version: '0.0.8',
+  version: '0.2.0',
   summary: 'Extends mozfet:payments with subscription product management.',
   git: 'https://github.com/mozfet/meteor-subscriptions.git',
   documentation: 'README.md'
@@ -21,8 +21,8 @@ Package.onUse(function(api) {
 
   // server
   api.use([
-    'mozfet:meteor-logs@0.3.3',
-    'mozfet:materialize-payments@1.0.4'
+    'mozfet:meteor-logs@1.1.0',
+    'mozfet:materialize-payments@1.1.0'
   ], 'server');
   api.mainModule('./server/subscriptions.js', 'server');
 
